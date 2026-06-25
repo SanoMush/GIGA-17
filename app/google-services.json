@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324545680494",
+    "project_id": "giga17-e03c3",
+    "storage_bucket": "giga17-e03c3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324545680494:android:d5db7e71f6aefcc81b427f",
+        "android_client_info": {
+          "package_name": "com.example.giga17"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJRfqXXiX-vdLRYUXdTKHhSR7G-pf1F6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
