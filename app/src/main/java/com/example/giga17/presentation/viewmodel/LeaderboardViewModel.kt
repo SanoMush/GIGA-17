@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.giga17.data.model.Siswa
+import com.example.giga17.data.repository.LeaderboardRepository
 import com.example.giga17.data.repository.SiswaRepository
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 sealed class LeaderboardState {
     object Loading : LeaderboardState()
@@ -22,47 +23,41 @@ sealed class LeaderboardState {
 }
 
 class LeaderboardViewModel(
+    private val leaderboardRepository: LeaderboardRepository,
     private val siswaRepository: SiswaRepository
 ) : ViewModel() {
 
-    private val _leaderboardState = MutableStateFlow<LeaderboardState>(LeaderboardState.Loading)
-    val leaderboardState: StateFlow<LeaderboardState> = _leaderboardState.asStateFlow()
-
-    init {
-        loadLeaderboardData()
+    val leaderboardState: StateFlow<LeaderboardState> = combine(
+        leaderboardRepository.getRealTimeLeaderboard(),
+        siswaRepository.observeCurrentSiswa()
+    ) { topUsers, currentSiswa ->
+        val currentRankIndex = topUsers.indexOfFirst { it.nim == currentSiswa?.nim }
+        val currentRank = if (currentRankIndex != -1) currentRankIndex + 1 else null
+        
+        LeaderboardState.Success(
+            topUsers = topUsers,
+            currentUserRank = currentRank,
+            currentSiswa = currentSiswa
+        ) as LeaderboardState
     }
-
-    private fun loadLeaderboardData() {
-        viewModelScope.launch {
-            try {
-                siswaRepository.getAllSiswaByXp().collectLatest { allSiswa ->
-                    val currentSiswaId = siswaRepository.currentSiswaId
-                    val currentSiswa = allSiswa.find { it.id == currentSiswaId }
-                    val currentRankIndex = allSiswa.indexOfFirst { it.id == currentSiswaId }
-                    val currentRank = if (currentRankIndex != -1) currentRankIndex + 1 else null
-                    
-                    val topUsers = allSiswa.take(20)
-                    
-                    _leaderboardState.value = LeaderboardState.Success(
-                        topUsers = topUsers,
-                        currentUserRank = currentRank,
-                        currentSiswa = currentSiswa
-                    )
-                }
-            } catch (e: Exception) {
-                _leaderboardState.value = LeaderboardState.Error("Gagal memuat leaderboard: ${e.localizedMessage}")
-            }
-        }
+    .catch { e ->
+        emit(LeaderboardState.Error("Gagal memuat leaderboard: ${e.localizedMessage}"))
     }
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = LeaderboardState.Loading
+    )
 
     companion object {
         fun provideFactory(
+            leaderboardRepository: LeaderboardRepository,
             siswaRepository: SiswaRepository
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(LeaderboardViewModel::class.java)) {
-                    return LeaderboardViewModel(siswaRepository) as T
+                    return LeaderboardViewModel(leaderboardRepository, siswaRepository) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
             }

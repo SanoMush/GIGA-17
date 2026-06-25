@@ -10,6 +10,7 @@ import com.example.giga17.data.repository.PencapaianRepository
 import com.example.giga17.data.repository.ProgresRepository
 import com.example.giga17.data.repository.SiswaRepository
 import com.example.giga17.data.repository.CompilerRepository
+import com.example.giga17.data.repository.LeaderboardRepository
 import com.example.giga17.domain.engine.GamificationEventBus
 
     interface AppContainer {
@@ -20,6 +21,7 @@ import com.example.giga17.domain.engine.GamificationEventBus
         val observationRepository: ObservationRepository
         val compilerRepository: CompilerRepository
         val gamificationEventBus: GamificationEventBus
+        val leaderboardRepository: LeaderboardRepository
     }
     
     class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -79,5 +81,9 @@ import com.example.giga17.domain.engine.GamificationEventBus
         
         override val compilerRepository: CompilerRepository by lazy {
             CompilerRepository()
+        }
+        
+        override val leaderboardRepository: LeaderboardRepository by lazy {
+            LeaderboardRepository()
         }
     }

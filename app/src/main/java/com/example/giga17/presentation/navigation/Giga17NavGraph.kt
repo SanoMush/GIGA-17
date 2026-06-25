@@ -99,6 +99,7 @@ fun Giga17NavGraph(
         composable(Screen.Leaderboard.route) {
             val leaderboardViewModel: com.example.giga17.presentation.viewmodel.LeaderboardViewModel = viewModel(
                 factory = com.example.giga17.presentation.viewmodel.LeaderboardViewModel.provideFactory(
+                    appContainer.leaderboardRepository,
                     appContainer.siswaRepository
                 )
             )
