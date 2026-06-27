@@ -1,13 +1,15 @@
 package com.example.giga17.presentation.ui.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.giga17.R
 import com.example.giga17.presentation.viewmodel.AuthState
 import com.example.giga17.presentation.viewmodel.AuthViewModel
 
@@ -42,11 +46,14 @@ fun LoginScreen(
         }
     }
 
-    // Gradient background for modern feel
+    val primaryOrange = Color(0xFFFF7A3D)
+    val lightBackground = Color(0xFFFCFDFD)
+
+    // Gradient background to mimic the subtle wavy orange background in the image
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.surface
+            lightBackground,
+            Color(0xFFFFF5F0)
         )
     )
 
@@ -54,62 +61,64 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundBrush),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(top = 48.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Recommendation: Added a Star Icon to make it look less plain
-            // It represents gamification (GIGA: Gamified Informatics...)
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Gamified Icon",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(bottom = 16.dp)
-            )
-
             // Title Outside the Box
             Text(
                 text = "GIGA 17",
-                style = MaterialTheme.typography.displaySmall.copy(
+                style = MaterialTheme.typography.displayMedium.copy(
                     fontWeight = FontWeight.Black
                 ),
-                color = MaterialTheme.colorScheme.primary,
-                letterSpacing = 2.sp
+                color = primaryOrange,
+                letterSpacing = 1.sp
             )
             
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = "Gamified Informatics Guide & Academy for 17",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 32.dp, start = 16.dp, end = 16.dp),
+                text = "Gamified Informatics Guide &\nAcademy for 17",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Gray,
                 textAlign = TextAlign.Center
+            )
+
+            // 3D Illustration Image
+            Image(
+                painter = painterResource(id = R.drawable.login_illustration),
+                contentDescription = "Login Illustration",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(260.dp)
+                    .padding(vertical = 16.dp)
             )
 
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-                    // Added custom shadow modifier for more prominent shadow all around the box
+                    .padding(horizontal = 24.dp)
                     .shadow(
                         elevation = 16.dp, 
                         shape = RoundedCornerShape(24.dp), 
-                        ambientColor = MaterialTheme.colorScheme.primary, 
-                        spotColor = MaterialTheme.colorScheme.onSurface
+                        ambientColor = Color.Black.copy(alpha = 0.05f), 
+                        spotColor = Color.Black.copy(alpha = 0.05f)
                     ),
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                    containerColor = Color.White
                 ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp) // Reset card default elevation since we use modifier shadow
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp),
+                        .padding(horizontal = 24.dp, vertical = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Welcome Message inside the Box
@@ -118,14 +127,14 @@ fun LoginScreen(
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold
                         ),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = primaryOrange,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     
                     Text(
                         text = "Masuk untuk melanjutkan belajar",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        color = Color.Gray,
                         modifier = Modifier.padding(bottom = 32.dp),
                         textAlign = TextAlign.Center
                     )
@@ -134,9 +143,9 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = nis,
                         onValueChange = { nis = it },
-                        label = { Text("NIS") },
+                        placeholder = { Text("NIS", color = Color.Gray) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = "User Icon")
+                            Icon(imageVector = Icons.Default.Person, contentDescription = "User Icon", tint = primaryOrange)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
@@ -146,8 +155,8 @@ fun LoginScreen(
                             imeAction = ImeAction.Next
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            focusedBorderColor = primaryOrange,
+                            unfocusedBorderColor = Color.LightGray
                         )
                     )
 
@@ -157,9 +166,9 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        placeholder = { Text("Password", color = Color.Gray) },
                         leadingIcon = {
-                            Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock Icon")
+                            Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock Icon", tint = primaryOrange)
                         },
                         visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth(),
@@ -170,8 +179,8 @@ fun LoginScreen(
                             imeAction = ImeAction.Done
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            focusedBorderColor = primaryOrange,
+                            unfocusedBorderColor = Color.LightGray
                         )
                     )
 
@@ -197,13 +206,14 @@ fun LoginScreen(
                         shape = RoundedCornerShape(16.dp),
                         enabled = authState !is AuthState.Loading && nis.isNotBlank() && password.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
+                            containerColor = primaryOrange,
+                            disabledContainerColor = primaryOrange.copy(alpha = 0.5f)
                         )
                     ) {
                         if (authState is AuthState.Loading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = Color.White,
                                 strokeWidth = 3.dp
                             )
                         } else {
@@ -211,7 +221,8 @@ fun LoginScreen(
                                 text = "LOGIN",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold
-                                )
+                                ),
+                                color = Color.White
                             )
                         }
                     }
