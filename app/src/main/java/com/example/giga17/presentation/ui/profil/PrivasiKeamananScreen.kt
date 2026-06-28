@@ -37,11 +37,11 @@ fun PrivasiKeamananScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = Color.White
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -52,7 +52,7 @@ fun PrivasiKeamananScreen(
             Text(
                 text = "Keamanan Akun",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFF11142D)
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -62,7 +62,7 @@ fun PrivasiKeamananScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("Ubah Password", modifier = Modifier.padding(8.dp), color = Color(0xFF11142D))
+                    Text("Ubah Password", modifier = Modifier.padding(8.dp), color = MaterialTheme.colorScheme.onBackground)
                 }
             } else {
                 OutlinedTextField(
@@ -136,7 +136,7 @@ fun PrivasiKeamananScreen(
             Text(
                 text = "Data Privasi",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFF11142D)
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(

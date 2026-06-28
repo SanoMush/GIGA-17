@@ -55,18 +55,18 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
         // Dekorasi palet warna orange di background
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
-                color = Color(0xFFFFF0E5),
+                color = primaryOrange.copy(alpha = 0.1f),
                 radius = size.width * 0.7f,
                 center = androidx.compose.ui.geometry.Offset(size.width, 0f)
             )
             drawCircle(
-                color = Color(0xFFFFE0CC),
+                color = primaryOrange.copy(alpha = 0.2f),
                 radius = size.width * 0.5f,
                 center = androidx.compose.ui.geometry.Offset(0f, size.height)
             )
@@ -126,7 +126,7 @@ fun LoginScreen(
                     ),
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
@@ -170,7 +170,9 @@ fun LoginScreen(
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = primaryOrange,
-                            unfocusedBorderColor = Color.LightGray
+                            unfocusedBorderColor = Color.LightGray,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
 
@@ -194,7 +196,9 @@ fun LoginScreen(
                         ),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = primaryOrange,
-                            unfocusedBorderColor = Color.LightGray
+                            unfocusedBorderColor = Color.LightGray,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
 

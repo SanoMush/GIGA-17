@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -39,7 +39,7 @@ fun LeaderboardScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 24.dp)
     ) {
         // App Bar
@@ -47,7 +47,7 @@ fun LeaderboardScreen(
         Text(
             text = "Leaderboard",
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            color = Color(0xFF11142D)
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -86,7 +86,7 @@ fun LeaderboardScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFF9F9F9))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
                                     .padding(horizontal = 16.dp, vertical = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -234,7 +234,7 @@ fun PodiumCard(
             Box(
                 modifier = Modifier
                     .size(if (isFirst) 64.dp else 56.dp)
-                    .background(Color.White, CircleShape)
+                    .background(MaterialTheme.colorScheme.surface, CircleShape)
                     .padding(4.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -258,14 +258,14 @@ fun PodiumCard(
                         .align(Alignment.TopStart)
                         .offset(x = (-8).dp, y = (-8).dp)
                         .size(24.dp)
-                        .background(Color.White, CircleShape)
+                        .background(MaterialTheme.colorScheme.surface, CircleShape)
                         .shadow(2.dp, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "$rank",
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -277,7 +277,7 @@ fun PodiumCard(
             Text(
                 text = firstName,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFF11142D),
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
             )
             
@@ -310,9 +310,9 @@ fun PodiumCard(
 
 @Composable
 fun LeaderboardRow(siswa: Siswa, rank: Int, isCurrentUser: Boolean) {
-    val bgColor = if (isCurrentUser) Color(0xFFFFF3ED) else Color.Transparent
-    val xpColor = if (isCurrentUser) Color(0xFFFF7A3D) else Color(0xFF11142D)
-    val nameColor = if (isCurrentUser) Color(0xFFFF7A3D) else Color(0xFF11142D)
+    val bgColor = if (isCurrentUser) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f) else Color.Transparent
+    val xpColor = if (isCurrentUser) Color(0xFFFF7A3D) else MaterialTheme.colorScheme.onBackground
+    val nameColor = if (isCurrentUser) Color(0xFFFF7A3D) else MaterialTheme.colorScheme.onBackground
     val displayName = if (isCurrentUser) "Kamu" else siswa.nama
 
     Row(
@@ -326,7 +326,7 @@ fun LeaderboardRow(siswa: Siswa, rank: Int, isCurrentUser: Boolean) {
         Text(
             text = "$rank",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            color = Color(0xFF11142D),
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.width(40.dp)
         )
         
@@ -369,7 +369,7 @@ fun MotivationCard(onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF9FAFC))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -409,7 +409,7 @@ fun MotivationCard(onClick: () -> Unit = {}) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Go",
                 tint = Color.White,
                 modifier = Modifier.size(16.dp)

@@ -89,7 +89,7 @@ fun ProfilScreen(
                             },
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(Color(0xFFFFF0E5), CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f), CircleShape)
                         ) {
                             Icon(imageVector = icon, contentDescription = name, tint = Color(0xFFFF7A3D), modifier = Modifier.size(32.dp))
                         }
@@ -107,7 +107,7 @@ fun ProfilScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
     ) {
@@ -123,7 +123,7 @@ fun ProfilScreen(
                 Text(
                     text = "Profil",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF11142D)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Kelola informasi dan pencapaianmu",
@@ -185,7 +185,7 @@ fun ProfilScreen(
                     Text(
                         text = "Galeri Pencapaian",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color(0xFF11142D)
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = "Lihat semua",
@@ -245,7 +245,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
-            .background(Color(0xFFFAFBFC)) // Sangat soft gray/white
+            .background(MaterialTheme.colorScheme.surfaceVariant) // Sangat soft gray/white di light mode, soft dark di dark mode
             .padding(20.dp)
     ) {
         Column {
@@ -256,7 +256,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
-                            .background(Color(0xFFFFF0E5)),
+                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -274,7 +274,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                             .offset(x = (-4).dp, y = (-4).dp)
                             .size(28.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.surface)
                             .clickable { onEditAvatar() }
                             .padding(2.dp),
                         contentAlignment = Alignment.Center
@@ -283,7 +283,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                                .background(Color.White),
+                                .background(MaterialTheme.colorScheme.surface),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -303,7 +303,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                     Text(
                         text = firstName,
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = Color(0xFF11142D)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -327,7 +327,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color(0xFFF3F0FF))
+                                .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f))
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -341,7 +341,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                             Text(
                                 text = "Level ${s.siswa.currentLevel}",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = Color(0xFF11142D)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                         
@@ -349,7 +349,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color(0xFFE6F7ED))
+                                .background(Color(0xFF4ADE80).copy(alpha = 0.2f))
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -363,7 +363,7 @@ fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
                             Text(
                                 text = "Pelajar Aktif",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = Color(0xFF11142D)
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -452,7 +452,7 @@ fun AchievementBadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
             modifier = Modifier
                 .size(70.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color(0xFFF8FAFC)),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -468,7 +468,7 @@ fun AchievementBadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
         Text(
             text = badgeDef.name,
             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-            color = Color(0xFF11142D),
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             maxLines = 1
         )
@@ -533,7 +533,7 @@ fun SettingsItem(icon: ImageVector, title: String, iconTint: Color, showDivider:
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                color = Color(0xFF11142D),
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.weight(1f)
             )
             Icon(
