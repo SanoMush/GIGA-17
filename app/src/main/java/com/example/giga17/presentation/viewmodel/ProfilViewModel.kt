@@ -76,6 +76,19 @@ class ProfilViewModel(
         }
     }
 
+    suspend fun changePassword(oldPw: String, newPw: String): Result<Unit> {
+        return try {
+            val success = siswaRepository.updatePassword(oldPw, newPw)
+            if (success) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Password lama salah atau terjadi kesalahan sistem."))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     companion object {
         fun provideFactory(
             siswaRepository: SiswaRepository,

@@ -1,5 +1,6 @@
 package com.example.giga17.presentation.ui.auth
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,9 +15,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -49,20 +52,25 @@ fun LoginScreen(
     val primaryOrange = Color(0xFFFF7A3D)
     val lightBackground = Color(0xFFFCFDFD)
 
-    // Gradient background to mimic the subtle wavy orange background in the image
-    val backgroundBrush = Brush.verticalGradient(
-        colors = listOf(
-            lightBackground,
-            Color(0xFFFFF5F0)
-        )
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundBrush),
+            .background(Color.White),
         contentAlignment = Alignment.TopCenter
     ) {
+        // Dekorasi palet warna orange di background
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                color = Color(0xFFFFF0E5),
+                radius = size.width * 0.7f,
+                center = androidx.compose.ui.geometry.Offset(size.width, 0f)
+            )
+            drawCircle(
+                color = Color(0xFFFFE0CC),
+                radius = size.width * 0.5f,
+                center = androidx.compose.ui.geometry.Offset(0f, size.height)
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -70,7 +78,7 @@ fun LoginScreen(
                 .padding(top = 48.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Title Outside the Box
+            // Judul Aplikasi
             Text(
                 text = "GIGA 17",
                 style = MaterialTheme.typography.displayMedium.copy(
@@ -89,20 +97,27 @@ fun LoginScreen(
                 textAlign = TextAlign.Center
             )
 
-            // 3D Illustration Image
+            // AREA GAMBAR ILUSTRASI
+            // Pastikan Anda sudah menyimpan gambar yang Anda kirimkan ke folder:
+            // app/src/main/res/drawable/ dengan nama "login_illustration.png"
             Image(
                 painter = painterResource(id = R.drawable.login_illustration),
                 contentDescription = "Login Illustration",
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp)
-                    .padding(vertical = 16.dp)
+                    .height(280.dp)
+                    .scale(1.4f)
+                    .padding(top = 16.dp, bottom = 0.dp)
             )
 
+            // Box Card Login
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
+                    // Offset ini akan membuat kotak login menimpa (overlap) gambar di atasnya
+                    .offset(y = (-40).dp) 
                     .shadow(
                         elevation = 16.dp, 
                         shape = RoundedCornerShape(24.dp), 
@@ -121,7 +136,6 @@ fun LoginScreen(
                         .padding(horizontal = 24.dp, vertical = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Welcome Message inside the Box
                     Text(
                         text = "Selamat Datang!",
                         style = MaterialTheme.typography.headlineSmall.copy(
@@ -143,7 +157,7 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = nis,
                         onValueChange = { nis = it },
-                        placeholder = { Text("NIS", color = Color.Gray) },
+                        label = { Text("NIS") },
                         leadingIcon = {
                             Icon(imageVector = Icons.Default.Person, contentDescription = "User Icon", tint = primaryOrange)
                         },
@@ -166,7 +180,7 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        placeholder = { Text("Password", color = Color.Gray) },
+                        label = { Text("Password") },
                         leadingIcon = {
                             Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock Icon", tint = primaryOrange)
                         },
@@ -186,7 +200,6 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Error Message
                     if (authState is AuthState.Error) {
                         Text(
                             text = (authState as AuthState.Error).message,
@@ -207,7 +220,7 @@ fun LoginScreen(
                         enabled = authState !is AuthState.Loading && nis.isNotBlank() && password.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = primaryOrange,
-                            disabledContainerColor = primaryOrange.copy(alpha = 0.5f)
+                            disabledContainerColor = primaryOrange.copy(alpha = 0.4f)
                         )
                     ) {
                         if (authState is AuthState.Loading) {

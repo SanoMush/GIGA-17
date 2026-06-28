@@ -176,6 +176,48 @@ fun Giga17NavGraph(
                         popUpTo(0) { inclusive = true }
                     }
                 },
+                onBack = { navController.popBackStack() },
+                onNavigateToGaleri = { navController.navigate(Screen.GaleriPencapaian.route) },
+                onNavigateToNotifikasi = { navController.navigate(Screen.PengaturanNotifikasi.route) },
+                onNavigateToPrivasi = { navController.navigate(Screen.PrivasiKeamanan.route) },
+                onNavigateToBantuan = { navController.navigate(Screen.BantuanFaq.route) }
+            )
+        }
+
+        composable(Screen.GaleriPencapaian.route) {
+            val profilViewModel: com.example.giga17.presentation.viewmodel.ProfilViewModel = viewModel(
+                factory = com.example.giga17.presentation.viewmodel.ProfilViewModel.provideFactory(
+                    appContainer.siswaRepository,
+                    appContainer.pencapaianRepository
+                )
+            )
+            com.example.giga17.presentation.ui.profil.GaleriPencapaianScreen(
+                viewModel = profilViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        
+        composable(Screen.PengaturanNotifikasi.route) {
+            com.example.giga17.presentation.ui.profil.PengaturanNotifikasiScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+        
+        composable(Screen.PrivasiKeamanan.route) {
+            val profilViewModel: com.example.giga17.presentation.viewmodel.ProfilViewModel = viewModel(
+                factory = com.example.giga17.presentation.viewmodel.ProfilViewModel.provideFactory(
+                    appContainer.siswaRepository,
+                    appContainer.pencapaianRepository
+                )
+            )
+            com.example.giga17.presentation.ui.profil.PrivasiKeamananScreen(
+                viewModel = profilViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        
+        composable(Screen.BantuanFaq.route) {
+            com.example.giga17.presentation.ui.profil.BantuanFaqScreen(
                 onBack = { navController.popBackStack() }
             )
         }

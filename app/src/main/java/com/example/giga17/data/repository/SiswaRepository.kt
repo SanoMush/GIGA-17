@@ -243,4 +243,31 @@ class SiswaRepository(
         
         pencapaianRepository?.checkAndUnlockBadges(siswaId)
     }
+
+    suspend fun updatePassword(oldPw: String, newPw: String): Boolean {
+        val id = currentSiswaId ?: return false
+        val entity = siswaDao.getSiswaById(id) ?: return false
+        
+        // Cek apakah password lama cocok
+        // Khusus untuk akun yang disinkronisasi dari Firebase (password = "firebase_auth"),
+        // kita izinkan mereka untuk mengganti password baru tanpa perlu mengingat "firebase_auth".
+        if (entity.password != "firebase_auth" && entity.password != oldPw) {
+            return false
+        }
+        
+        // Update Firebase Auth password jika user login menggunakan Firebase
+        val firebaseUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        if (firebaseUser != null) {
+            try {
+                firebaseUser.updatePassword(newPw).await()
+            } catch (e: Exception) {
+                // Gagal update di Firebase (misal karena session kedaluwarsa)
+                throw Exception("Sesi Anda sudah terlalu lama. Silakan logout dan login kembali untuk keamanan sebelum mengganti password.")
+            }
+        }
+        
+        val updated = entity.copy(password = newPw)
+        siswaDao.updateSiswa(updated)
+        return true
+    }
 }

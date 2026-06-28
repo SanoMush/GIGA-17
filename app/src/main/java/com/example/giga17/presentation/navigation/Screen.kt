@@ -16,4 +16,8 @@ sealed class Screen(val route: String) {
     }
     object Profil : Screen("profil")
     object TerminalPascal : Screen("terminal_pascal")
+    object GaleriPencapaian : Screen("galeri_pencapaian")
+    object PengaturanNotifikasi : Screen("pengaturan_notifikasi")
+    object PrivasiKeamanan : Screen("privasi_keamanan")
+    object BantuanFaq : Screen("bantuan_faq")
 }

@@ -53,7 +53,11 @@ import com.example.giga17.presentation.viewmodel.ProfilViewModel
 fun ProfilScreen(
     viewModel: ProfilViewModel,
     onLogout: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToGaleri: () -> Unit = {},
+    onNavigateToNotifikasi: () -> Unit = {},
+    onNavigateToPrivasi: () -> Unit = {},
+    onNavigateToBantuan: () -> Unit = {}
 ) {
     val state by viewModel.profilState.collectAsStateWithLifecycle()
     var showAvatarDialog by remember { mutableStateOf(false) }
@@ -186,7 +190,11 @@ fun ProfilScreen(
                     Text(
                         text = "Lihat semua",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color(0xFFFF7A3D)
+                        color = Color(0xFFFF7A3D),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .clickable { onNavigateToGaleri() }
+                            .padding(4.dp)
                     )
                 }
                 
@@ -204,7 +212,11 @@ fun ProfilScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 
                 // Settings List
-                SettingsMenu()
+                SettingsMenu(
+                    onNavigateToNotifikasi = onNavigateToNotifikasi,
+                    onNavigateToPrivasi = onNavigateToPrivasi,
+                    onNavigateToBantuan = onNavigateToBantuan
+                )
                 
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -471,41 +483,43 @@ fun AchievementBadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
 }
 
 @Composable
-fun SettingsMenu() {
+fun SettingsMenu(
+    onNavigateToNotifikasi: () -> Unit,
+    onNavigateToPrivasi: () -> Unit,
+    onNavigateToBantuan: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         SettingsItem(
-            icon = Icons.Default.PersonOutline,
-            title = "Informasi Akun",
-            iconTint = Color(0xFFFFC107)
-        )
-        SettingsItem(
             icon = Icons.Default.NotificationsNone,
             title = "Pengaturan Notifikasi",
-            iconTint = Color(0xFFFF7A3D)
+            iconTint = Color(0xFFFF7A3D),
+            onClick = onNavigateToNotifikasi
         )
         SettingsItem(
             icon = Icons.Default.Shield,
             title = "Privasi & Keamanan",
-            iconTint = Color(0xFF4ADE80)
+            iconTint = Color(0xFF4ADE80),
+            onClick = onNavigateToPrivasi
         )
         SettingsItem(
             icon = Icons.AutoMirrored.Filled.HelpOutline,
             title = "Bantuan & FAQ",
             iconTint = Color(0xFFFFC107),
-            showDivider = false
+            showDivider = false,
+            onClick = onNavigateToBantuan
         )
     }
 }
 
 @Composable
-fun SettingsItem(icon: ImageVector, title: String, iconTint: Color, showDivider: Boolean = true) {
+fun SettingsItem(icon: ImageVector, title: String, iconTint: Color, showDivider: Boolean = true, onClick: () -> Unit = {}) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
+                .clickable { onClick() }
                 .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
