@@ -1,30 +1,49 @@
 package com.example.giga17.presentation.ui.profil
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.giga17.domain.engine.GamificationEngine
 import com.example.giga17.domain.engine.GamificationEngine.BadgeDef
 import com.example.giga17.presentation.viewmodel.ProfilState
 import com.example.giga17.presentation.viewmodel.ProfilViewModel
@@ -66,117 +85,135 @@ fun ProfilScreen(
                             },
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                                .background(Color(0xFFFFF0E5), CircleShape)
                         ) {
-                            Icon(imageVector = icon, contentDescription = name, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+                            Icon(imageVector = icon, contentDescription = name, tint = Color(0xFFFF7A3D), modifier = Modifier.size(32.dp))
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showAvatarDialog = false }) {
-                    Text("Tutup")
+                    Text("Tutup", color = Color(0xFFFF7A3D))
                 }
             }
         )
     }
 
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Header Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Card(
+            Column {
+                Text(
+                    text = "Profil",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF11142D)
+                )
+                Text(
+                    text = "Kelola informasi dan pencapaianmu",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { 
+                        viewModel.logout()
+                        onLogout()
+                    }
+                    .padding(8.dp)
             ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Logout",
+                    tint = Color(0xFFFF7A3D),
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Logout",
+                    color = Color(0xFFFF7A3D),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        when (val s = state) {
+            is ProfilState.Loading -> {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color(0xFFFF7A3D))
+                }
+            }
+            is ProfilState.Error -> {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    Text(text = s.message, color = MaterialTheme.colorScheme.error)
+                }
+            }
+            is ProfilState.Success -> {
+                // User Info Card
+                UserInfoCard(s = s, onEditAvatar = { showAvatarDialog = true })
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                // Achievements Gallery
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Profil Siswa",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = "Galeri Pencapaian",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color(0xFF11142D)
                     )
-                    TextButton(onClick = { 
-                        viewModel.logout()
-                        onLogout() 
-                    }) {
-                        Text(
-                            text = "Keluar",
-                            color = MaterialTheme.colorScheme.error,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-            when (val s = state) {
-                is ProfilState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is ProfilState.Error -> {
                     Text(
-                        text = s.message,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
+                        text = "Lihat semua",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color(0xFFFF7A3D)
                     )
                 }
-                is ProfilState.Success -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp)
-                    ) {
-                        // Header Profil
-                        ProfilHeader(
-                            s = s,
-                            onEditAvatar = { showAvatarDialog = true }
-                        )
-                        Spacer(modifier = Modifier.height(32.dp))
-                        
-                        Text(
-                            text = "Galeri Pencapaian",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Grid Badge
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            items(s.allBadges) { badgeDef ->
-                                val isUnlocked = s.unlockedBadges.any { it.badgeId == badgeDef.id }
-                                BadgeItem(badgeDef, isUnlocked)
-                            }
-                        }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(s.allBadges) { badgeDef ->
+                        val isUnlocked = s.unlockedBadges.any { it.badgeId == badgeDef.id }
+                        AchievementBadgeItem(badgeDef, isUnlocked)
                     }
                 }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                // Settings List
+                SettingsMenu()
+                
+                Spacer(modifier = Modifier.height(32.dp))
             }
-        }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfilHeader(s: ProfilState.Success, onEditAvatar: () -> Unit) {
+fun UserInfoCard(s: ProfilState.Success, onEditAvatar: () -> Unit) {
     val currentAvatarIcon = when (s.siswa.avatarResId) {
         "Face" -> Icons.Default.Face
         "Star" -> Icons.Default.Star
@@ -186,92 +223,204 @@ fun ProfilHeader(s: ProfilState.Success, onEditAvatar: () -> Unit) {
         else -> Icons.Default.Person
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    // Hitung next level XP secara sederhana
+    val currentLevelIndex = s.siswa.currentLevel
+    val nextLevelXp = GamificationEngine.levelThresholds.getOrNull(currentLevelIndex) ?: (s.siswa.totalXp + 1000)
+    val xpNeeded = (nextLevelXp - s.siswa.totalXp).coerceAtLeast(0)
+    val progress = if (nextLevelXp > 0) s.siswa.totalXp.toFloat() / nextLevelXp.toFloat() else 0f
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Color(0xFFFAFBFC)) // Sangat soft gray/white
+            .padding(20.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.size(80.dp)
-            ) {
-                // Main Avatar
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = currentAvatarIcon,
-                        contentDescription = "Avatar",
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Avatar
+                Box(modifier = Modifier.size(90.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .background(Color(0xFFFFF0E5)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = currentAvatarIcon,
+                            contentDescription = "Avatar",
+                            modifier = Modifier.size(50.dp),
+                            tint = Color(0xFFFF7A3D)
+                        )
+                    }
+                    
+                    // Edit Icon
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .offset(x = (-4).dp, y = (-4).dp)
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(Color.White)
+                            .clickable { onEditAvatar() }
+                            .padding(2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                                .background(Color.White),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = Color(0xFFFF7A3D),
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+                    }
                 }
                 
-                // Edit Badge
-                Surface(
-                    onClick = onEditAvatar,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(32.dp),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                    shadowElevation = 4.dp
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Avatar",
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary
+                Spacer(modifier = Modifier.width(20.dp))
+                
+                Column {
+                    val firstName = s.siswa.nama.split(" ").firstOrNull() ?: ""
+                    Text(
+                        text = firstName,
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = Color(0xFF11142D)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "NIS: ${s.siswa.nim}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
                         )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = "Copy NIS",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        // Badge Level
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFFF3F0FF))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.StarBorder,
+                                contentDescription = null,
+                                tint = Color(0xFFFF7A3D),
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Level ${s.siswa.currentLevel}",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Color(0xFF11142D)
+                            )
+                        }
+                        
+                        // Badge Status
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFFE6F7ED))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Shield,
+                                contentDescription = null,
+                                tint = Color(0xFF4ADE80),
+                                modifier = Modifier.size(12.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Pelajar Aktif",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Color(0xFF11142D)
+                            )
+                        }
                     }
                 }
             }
-            Spacer(modifier = Modifier.width(24.dp))
-            Column {
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // XP Progress
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
                 Text(
-                    text = s.siswa.nama,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = "XP Progress",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Gray
                 )
                 Text(
-                    text = "NIS: ${s.siswa.nim} • ${s.siswa.kelas}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    text = "${s.siswa.totalXp} / $nextLevelXp XP",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Gray
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Level",
-                        modifier = Modifier.size(16.dp),
-                        tint = Color(0xFFFFD700)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Level ${s.siswa.currentLevel} • ${s.siswa.totalXp} XP",
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Custom Progress Bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(Color(0xFFE2E8F0))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = progress.coerceIn(0f, 1f))
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFFF7A3D))
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "$xpNeeded XP menuju Level ${s.siswa.currentLevel + 1}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray
+            )
         }
     }
 }
 
 @Composable
-fun BadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
-    val containerColor = if (isUnlocked) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = if (isUnlocked) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-    val iconColor = if (isUnlocked) Color(0xFFFFD700) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+fun AchievementBadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
+    val iconColor = when (badgeDef.category) {
+        "LEVEL" -> Color(0xFFFFD700) // Yellow
+        "STREAK" -> Color(0xFFFF9800) // Orange
+        "MATERI" -> Color(0xFF4ADE80) // Green
+        "KUIS" -> Color(0xFFFFC107) // Gold
+        else -> Color(0xFFFF7A3D)
+    }
+    
+    val displayIconColor = if (isUnlocked) iconColor else Color(0xFF94A3B8)
+    val statusText = if (isUnlocked) "Diraih" else "Belum Diraih"
+    val statusColor = if (isUnlocked) Color(0xFF4ADE80) else Color.LightGray
 
     val iconVector = when (badgeDef.icon) {
         "Star" -> Icons.Default.Star
@@ -279,40 +428,109 @@ fun BadgeItem(badgeDef: BadgeDef, isUnlocked: Boolean) {
         "Build" -> Icons.Default.Build
         "Info" -> Icons.Default.Info
         "ThumbUp" -> Icons.Default.ThumbUp
-        else -> Icons.Default.Star
+        else -> Icons.Default.EmojiEvents
     }
 
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isUnlocked) 4.dp else 0.dp)
+    Column(
+        modifier = Modifier.width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        // Icon Container
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .size(70.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(0xFFF8FAFC)),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = iconVector,
                 contentDescription = badgeDef.name,
-                modifier = Modifier.size(48.dp),
-                tint = iconColor
+                tint = displayIconColor,
+                modifier = Modifier.size(40.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = badgeDef.name,
+            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            color = Color(0xFF11142D),
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+        
+        Text(
+            text = statusText,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, fontWeight = FontWeight.Bold),
+            color = statusColor,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun SettingsMenu() {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        SettingsItem(
+            icon = Icons.Default.PersonOutline,
+            title = "Informasi Akun",
+            iconTint = Color(0xFFFFC107)
+        )
+        SettingsItem(
+            icon = Icons.Default.NotificationsNone,
+            title = "Pengaturan Notifikasi",
+            iconTint = Color(0xFFFF7A3D)
+        )
+        SettingsItem(
+            icon = Icons.Default.Shield,
+            title = "Privasi & Keamanan",
+            iconTint = Color(0xFF4ADE80)
+        )
+        SettingsItem(
+            icon = Icons.AutoMirrored.Filled.HelpOutline,
+            title = "Bantuan & FAQ",
+            iconTint = Color(0xFFFFC107),
+            showDivider = false
+        )
+    }
+}
+
+@Composable
+fun SettingsItem(icon: ImageVector, title: String, iconTint: Color, showDivider: Boolean = true) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = iconTint,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = badgeDef.name,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = contentColor,
-                textAlign = TextAlign.Center
+                text = title,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                color = Color(0xFF11142D),
+                modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = badgeDef.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = contentColor,
-                textAlign = TextAlign.Center
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "Go",
+                tint = Color.Gray,
+                modifier = Modifier.size(20.dp)
             )
+        }
+        if (showDivider) {
+            HorizontalDivider(color = Color(0xFFF1F5F9))
         }
     }
 }
