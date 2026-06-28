@@ -44,18 +44,21 @@ fun MainScreen(appContainer: AppContainer) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            bottomBar = {
-                if (showBottomBar) {
-                    BottomNavigationBar(navController = navController)
-                }
-            }
-        ) { paddingValues ->
+        Scaffold { paddingValues ->
             Giga17NavGraph(
                 appContainer = appContainer,
                 modifier = Modifier.padding(paddingValues),
                 navController = navController
             )
+        }
+
+        // Floating Bottom Navigation Bar
+        if (showBottomBar) {
+            Box(
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
+                BottomNavigationBar(navController = navController)
+            }
         }
 
         // Display current top event

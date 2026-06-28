@@ -76,7 +76,8 @@ fun DaftarMateriScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 24.dp, vertical = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(bottom = 100.dp)
                             ) {
                                 items(state.babList) { bab ->
                                     BabAccordion(
